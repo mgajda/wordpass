@@ -1,5 +1,8 @@
 -*-Changelog-*-
 
+0.4.1.0  May 2014
+	* Various esthetic fixes.
+
 0.4.0.0  May 2014
 	* Option to select standard Haskell random number generator or /dev/random.
 	* Pre-filtering input files to get rid of symlinks to files that are
