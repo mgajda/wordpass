@@ -1,5 +1,6 @@
 module Main where
 
+import           System.Directory(getDirectoryContents)
 import qualified Data.Functor.Identity(Identity)
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
@@ -14,7 +15,7 @@ import           Data.Random.Distribution.Uniform
 import           Data.Random.Source.IO
 import qualified Data.Vector  as V
 import           Control.Applicative
-import           Control.Monad       (replicateM)
+import           Control.Monad       (replicateM, foldM)
 
 -- | Reads a dict format to get a list of unique words without any special
 --   chars.
@@ -24,6 +25,23 @@ readDict filename = do
     return $! V.fromList . Set.toList . Set.fromList . map stripTails . Text.lines $! input
   where
     stripTails = head . Text.split (not . isAlpha)
+
+-- | Find all plausible dictionaries in a given directory
+dictFiles dir = postprocess `fmap`
+                  getDirectoryContents dir
+  where
+    postprocess = map ((dir ++ "/") ++) . filter (not . (=='.') . head)
+
+defaultDictDir :: FilePath
+defaultDictDir = "/usr/share/dict"
+
+-- | Read a set of dictionaries and put the together.
+readDicts filenames = (V.fromList . Set.toList) `fmap` foldM action Set.empty filenames
+  where
+    action currentSet filename = do newSet <- readDict filename
+                                    return $! Set.fromList (V.toList newSet) `Set.union` currentSet
+
+readDictDir dirname = dictFiles dirname >>= readDicts
 
 -- | Filename for default dictionary (should be command line argument or default glob.)
 defaultDictionary ::  FilePath
@@ -68,7 +86,7 @@ symbolChars = V.fromList $ filter (isSymbol ||| isPunctuation) $ map toEnum [0..
 symbolSeparator ::  RVar Text
 symbolSeparator = Text.singleton <$> randomElement symbolChars
 
-main = do dictWords <- readDict defaultDictionary
+main = do dictWords <- readDictDir defaultDictDir
           --print $ V.length dictWords
           putStr "Estimated password strength (bits): "
           print $ randomPasswordStrength dictWords numWs
