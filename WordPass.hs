@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskell, NoMonomorphismRestriction #-}
 -- | Main module generating passwords.
 module Main where
 
@@ -12,6 +12,7 @@ import           Data.Char           (isAlpha, isPunctuation, isSymbol)
 import           Data.Random.RVar
 import           Data.Random.Sample
 import           Data.Random.RVar.Enum
+import           Data.Random.Source.DevRandom
 import           Data.Random.Distribution
 import           Data.Random.Distribution.Uniform
 import           Data.Random.Source.IO
@@ -114,13 +115,19 @@ selectWordList :: FilePath -> FilePath -> IO (V.Vector Text)
 selectWordList ""       dir = readDictDir dir
 selectWordList filename _   = readDict    filename
 
+-- | Pick specific wordlist.
+defineFlag "r:pseudorandom" (False :: Bool) "Generate passwords using StdRandom generator, instead of DevRandom. (Faster, but less safe. Good for testing."
+
 main = do $initHFlags "WordPass - dictionary-based password generator"
           dictWords <- selectWordList flags_directory flags_wordlist
           putStrLn  $ "Read " ++ show (V.length dictWords) ++ " words from dictionaries."
           putStr "Estimated password strength (bits): "
           print $ randomPasswordStrength dictWords flags_words
           replicateM flags_passwords $ do 
-            rv <- sample $ randomPassword dictWords flags_words
+            let rand = randomPassword dictWords flags_words
+            rv <- if flags_pseudorandom
+                    then sample rand
+                    else sampleFrom DevRandom rand
             Text.putStrLn rv
 
 
