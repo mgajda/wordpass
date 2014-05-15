@@ -1,3 +1,4 @@
+{-# LANGUAGE TemplateHaskell #-}
 -- | Main module generating passwords.
 module Main where
 
@@ -17,6 +18,7 @@ import           Data.Random.Source.IO
 import qualified Data.Vector  as V
 import           Control.Applicative
 import           Control.Monad       (replicateM, foldM)
+import           HFlags
 
 -- | Reads a dict format to get a list of unique words without any special
 --   chars.
@@ -34,8 +36,7 @@ dictFiles dir = postprocess `fmap`
     postprocess = map ((dir ++ "/") ++) . filter (not . (=='.') . head)
 
 -- | Default directory where to look for the word lists.
-defaultDictDir :: FilePath
-defaultDictDir = "/usr/share/dict"
+
 
 -- | Read a set of dictionaries and put the together.
 readDicts filenames = do putStr $ "Reading " ++ show (length filenames) ++ " files"
@@ -95,13 +96,31 @@ symbolChars = V.fromList $ filter (isSymbol ||| isPunctuation) $ map toEnum [0..
 symbolSeparator ::  RVar Text
 symbolSeparator = Text.singleton <$> randomElement symbolChars
 
-main = do dictWords <- readDictDir defaultDictDir
+-- * Command-line flags
+-- | Number of words per password
+defineFlag "w:words" (4 :: Int) "Number of words for each password."
+
+-- | Number of passwords
+defineFlag "p:passwords" (10 :: Int) "Number of passwords to generate."
+
+-- | Default word list directory.
+defineFlag "d:directory" ("/usr/share/dict" :: FilePath) ("Default directory to search for dictionaries\n (works only if --wordlist options is NOT USED.)")
+
+-- | Pick specific wordlist.
+defineFlag "l:wordlist" ("" :: FilePath) "Select particular dictionary (filepath)."
+
+-- | Read wordlist given by explict filepath, or search for all wordlists in a given directory.
+selectWordList :: FilePath -> FilePath -> IO (V.Vector Text)
+selectWordList ""       dir = readDictDir dir
+selectWordList filename _   = readDict    filename
+
+main = do $initHFlags "WordPass - dictionary-based password generator"
+          dictWords <- selectWordList flags_directory flags_wordlist
           putStrLn  $ "Read " ++ show (V.length dictWords) ++ " words from dictionaries."
           putStr "Estimated password strength (bits): "
-          print $ randomPasswordStrength dictWords numWs
-          replicateM 5 $ do 
-            rv <- sample $ randomPassword dictWords numWs
+          print $ randomPasswordStrength dictWords flags_words
+          replicateM flags_passwords $ do 
+            rv <- sample $ randomPassword dictWords flags_words
             Text.putStrLn rv
-  where
-    numWs = 5
-  
+
+
