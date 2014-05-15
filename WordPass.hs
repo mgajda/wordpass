@@ -1,6 +1,7 @@
 -- | Main module generating passwords.
 module Main where
 
+import           System.IO       (hFlush, stdout)
 import           System.Directory(getDirectoryContents)
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
@@ -37,9 +38,12 @@ defaultDictDir :: FilePath
 defaultDictDir = "/usr/share/dict"
 
 -- | Read a set of dictionaries and put the together.
-readDicts filenames = (V.fromList . Set.toList) `fmap` foldM action Set.empty filenames
+readDicts filenames = do putStr $ "Reading " ++ show (length filenames) ++ " files"
+                         (V.fromList . Set.toList) `fmap` foldM action Set.empty filenames
   where
     action currentSet filename = do newSet <- readDict filename
+                                    putStr "."
+                                    hFlush stdout
                                     return $! Set.fromList (V.toList newSet) `Set.union` currentSet
 
 -- | Read all dictionaries from a given directory.
