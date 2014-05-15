@@ -15,5 +15,5 @@ password space size in bits.
 
 Using just four words from default English dictionary of ~50k words will
 give approximately 90 bits of entropy. Lucky speakers of languages with
-rich flexion like Polish (over 3 million words) can easily up this to over
-110 bits of entropy.
+rich inflection like Polish (over 3 million words) can easily up this to
+over 110 bits of entropy.
