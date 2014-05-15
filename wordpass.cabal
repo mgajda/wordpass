@@ -2,7 +2,15 @@ name:                wordpass
 version:             0.4.0.0
 synopsis:            Dictionary-based password generator
 description:         This script reads dict word lists and generates word-based passwords.
-                     Not unlike <http://xkcd.com/936/ Xkcd>.    
+                     Not unlike <http://xkcd.com/936/ Xkcd>.
+                     .
+                     Program also prints how many words have been read, and indicates estimated
+                     password space size in bits.
+                     .
+                     Using just four words from default English dictionary of ~50k words will
+                     give approximately 90 bits of entropy. Lucky speakers of languages with
+                     rich flexion like Polish (over 3 million words) can easily up this to over
+                     110 bits of entropy.
 homepage:            https://github.com/mjgajda/wordpass
 license:             BSD3
 license-file:        LICENSE
