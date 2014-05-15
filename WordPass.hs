@@ -3,11 +3,13 @@
 module Main where
 
 import           System.IO       (hFlush, stdout)
-import           System.Directory(getDirectoryContents)
+import           System.Directory
+import           System.FilePath ((</>), takeDirectory)
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
 import           Data.Text(Text)
 import qualified Data.Set     as Set
+import           Data.Set (Set)
 import           Data.Char           (isAlpha, isPunctuation, isSymbol)
 import           Data.Random.RVar
 import           Data.Random.Sample
@@ -18,37 +20,60 @@ import           Data.Random.Distribution.Uniform
 import           Data.Random.Source.IO
 import qualified Data.Vector  as V
 import           Control.Applicative
-import           Control.Monad       (replicateM, foldM)
+import           Control.Monad       (replicateM, foldM, filterM)
+import           Control.DeepSeq
 import           HFlags
+import           System.PosixCompat
+
+type WordList = Set.Set Text
+
+-- | Try to resolve symbolic link chain for given filename.
+resolveSymbolicLink s = do b <- isSymbolicLink `fmap` getSymbolicLinkStatus s
+                           if b
+                             then do newPath <- readSymbolicLink s
+                                     resolveSymbolicLink $! takeDirectory s </> newPath 
+                             else return s
 
 -- | Reads a dict format to get a list of unique words without any special
 --   chars.
-readDict ::  FilePath -> IO (V.Vector Text)
+readDict ::  FilePath -> IO WordList
 readDict filename = do
     input <- Text.readFile filename
-    return $! V.fromList . Set.toList . Set.fromList . map stripTails . Text.lines $! input
+    return $! Set.fromList . map stripTails . Text.lines $! input
   where
     stripTails = head . Text.split (not . isAlpha)
 
 -- | Find all plausible dictionaries in a given directory
-dictFiles dir = postprocess `fmap`
-                  getDirectoryContents dir
+dictFiles dir = do candidates <- preprocess `fmap` prefilter `fmap`
+                                   getDirectoryContents dir
+                   resolvedCandidates <- uniquify `fmap` mapM resolveSymbolicLink candidates
+                   result <- filterM checkPerms resolvedCandidates
+                   print result
+                   return result
   where
-    postprocess = map ((dir ++ "/") ++) . filter (not . (=='.') . head)
-
--- | Default directory where to look for the word lists.
-
+    preprocess = map ((dir ++ "/") ++)
+    prefilter  = filter (not . (`elem` ".~_") . head) . filter (not . ("README" `isPrefixOf`))
+    checkPerms filename = do perms <- getPermissions filename
+                             return $!      readable   perms  &&
+                                       not (executable perms) &&
+                                       not (searchable perms)
+    uniquify = Set.toList . Set.fromList
+    isPrefixOf ""     a               = True
+    isPrefixOf bs     ""              = False
+    isPrefixOf (b:bs) (c:cs) | b == c = isPrefixOf bs cs
+    isPrefixOf _      _               = False
 
 -- | Read a set of dictionaries and put the together.
 readDicts filenames = do putStr $ "Reading " ++ show (length filenames) ++ " files"
-                         result <- (V.fromList . Set.toList) `fmap` foldM action Set.empty filenames
+                         result <- foldM action Set.empty filenames
                          putStrLn ""
                          return result
   where
     action currentSet filename = do newSet <- readDict filename
+                                    let result = newSet `Set.union` currentSet
                                     putStr "."
                                     hFlush stdout
-                                    return $! Set.fromList (V.toList newSet) `Set.union` currentSet
+                                    result `deepseq` return result
 
 -- | Read all dictionaries from a given directory.
 readDictDir dirname = dictFiles dirname >>= readDicts
@@ -111,7 +136,7 @@ defineFlag "d:directory" ("/usr/share/dict" :: FilePath) ("Default directory to 
 defineFlag "l:wordlist" ("" :: FilePath) "Select particular dictionary (filepath)."
 
 -- | Read wordlist given by explict filepath, or search for all wordlists in a given directory.
-selectWordList :: FilePath -> FilePath -> IO (V.Vector Text)
+selectWordList :: FilePath -> FilePath -> IO WordList
 selectWordList ""       dir = readDictDir dir
 selectWordList filename _   = readDict    filename
 
@@ -119,7 +144,7 @@ selectWordList filename _   = readDict    filename
 defineFlag "r:pseudorandom" (False :: Bool) "Generate passwords using StdRandom generator, instead of DevRandom. (Faster, but less safe. Good for testing."
 
 main = do $initHFlags "WordPass - dictionary-based password generator"
-          dictWords <- selectWordList flags_directory flags_wordlist
+          dictWords <- (V.fromList . Set.toList) `fmap` selectWordList flags_wordlist flags_directory
           putStrLn  $ "Read " ++ show (V.length dictWords) ++ " words from dictionaries."
           putStr "Estimated password strength (bits): "
           print $ randomPasswordStrength dictWords flags_words
