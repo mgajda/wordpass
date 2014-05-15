@@ -2,6 +2,7 @@
 -- | Main module generating passwords.
 module Main where
 
+import           Data.Ratio
 import           System.IO       (hFlush, stdout)
 import           System.Directory
 import           System.FilePath ((</>), takeDirectory)
@@ -95,19 +96,32 @@ randomPassword words numWords = do ws   <- replicateM numWords $ randomElement w
 -- | Estimate strength of random password with given inputs.
 randomPasswordStrength words numWords = fromIntegral numWords * logBase 2 wordStrength
   where
-    wordStrength = fromIntegral $ V.length words * (32 + 100)
+    wordStrength = fromIntegral $ V.length words * (numSymbols + numNumericSeparators)
+
+numSymbols  = V.length symbolChars -- 32
+numNumericSeparators = 100
 
 -- * Random separators
 -- | Randomly pick a word separator as a two-digit number, or a symbol
 --   character.
 randomSeparator ::  RVar Text
-randomSeparator = do b <- uniform False True
-                     if b then symbolSeparator
-                          else numericSeparator
+randomSeparator = randomChoice ratio  randomSymbolSeparator randomNumericSeparator
+  where
+    ratio = numSymbols % numNumericSeparators
+
+-- | Performs random choice between two RVar values.
+--   Input is a _ratio_ of the _relative_ probabilities between first and
+--   second option (A/B).
+randomChoice ratio variantA variantB = do draw <- uniform 0 1
+                                          if draw >= probabilityOfVariantA
+                                            then variantA
+                                            else variantB
+  where
+    probabilityOfVariantA = 1/(1+1/ratio)
 
 -- | Two-digit number as a separator 10^2 = 6.6 bits of entropy.
-numericSeparator ::  RVar Text
-numericSeparator = Text.pack <$> show <$> uniform 0 (99 :: Int)
+randomNumericSeparator ::  RVar Text
+randomNumericSeparator = Text.pack <$> show <$> uniform 0 (numNumericSeparators :: Int)
 
 -- | Conjunction of two unary predicates
 (|||) ::  (t -> Bool) -> (t -> Bool) -> t -> Bool
@@ -119,8 +133,8 @@ symbolChars ::  V.Vector Char
 symbolChars = V.fromList $ filter (isSymbol ||| isPunctuation) $ map toEnum [0..127]
 
 -- | Text with random symbol character, 5 bits of entropy
-symbolSeparator ::  RVar Text
-symbolSeparator = Text.singleton <$> randomElement symbolChars
+randomSymbolSeparator ::  RVar Text
+randomSymbolSeparator = Text.singleton <$> randomElement symbolChars
 
 -- * Command-line flags
 -- | Number of words per password
