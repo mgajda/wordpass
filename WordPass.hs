@@ -39,7 +39,9 @@ defaultDictDir = "/usr/share/dict"
 
 -- | Read a set of dictionaries and put the together.
 readDicts filenames = do putStr $ "Reading " ++ show (length filenames) ++ " files"
-                         (V.fromList . Set.toList) `fmap` foldM action Set.empty filenames
+                         result <- (V.fromList . Set.toList) `fmap` foldM action Set.empty filenames
+                         putStrLn ""
+                         return result
   where
     action currentSet filename = do newSet <- readDict filename
                                     putStr "."
@@ -94,7 +96,7 @@ symbolSeparator ::  RVar Text
 symbolSeparator = Text.singleton <$> randomElement symbolChars
 
 main = do dictWords <- readDictDir defaultDictDir
-          --print $ V.length dictWords
+          putStrLn  $ "Read " ++ show (V.length dictWords) ++ " words from dictionaries."
           putStr "Estimated password strength (bits): "
           print $ randomPasswordStrength dictWords numWs
           replicateM 5 $ do 
