@@ -15,6 +15,8 @@ import           Data.Char           (isAlpha, isPunctuation, isSymbol)
 import           Data.Random.RVar
 import           Data.Random.Sample
 import           Data.Random.RVar.Enum
+import           Data.Random.Choice
+import           Data.Random.Vector
 import           Data.Random.Source.DevRandom
 import           Data.Random.Distribution
 import           Data.Random.Distribution.Uniform
@@ -83,10 +85,6 @@ readDictDir dirname = dictFiles dirname >>= readDicts
 defaultDictionary ::  FilePath
 defaultDictionary = "/usr/share/dict/british-english"
 
--- | Take a random element of a vector.
-randomElement :: V.Vector a -> RVar a
-randomElement words = (words V.!) <$> uniform 0 (V.length words - 1)
-
 -- | Pick a random password, given a words list, and a number of words it will contain.
 randomPassword :: V.Vector Text -> Int -> RVar Text
 randomPassword words numWords = do ws   <- replicateM numWords $ randomElement words
@@ -108,16 +106,6 @@ randomSeparator ::  RVar Text
 randomSeparator = randomChoice ratio  randomSymbolSeparator randomNumericSeparator
   where
     ratio = numSymbols % numNumericSeparators
-
--- | Performs random choice between two RVar values.
---   Input is a _ratio_ of the _relative_ probabilities between first and
---   second option (A/B).
-randomChoice ratio variantA variantB = do draw <- uniform 0 1
-                                          if draw >= probabilityOfVariantA
-                                            then variantA
-                                            else variantB
-  where
-    probabilityOfVariantA = 1/(1+1/ratio)
 
 -- | Two-digit number as a separator 10^2 = 6.6 bits of entropy.
 randomNumericSeparator ::  RVar Text

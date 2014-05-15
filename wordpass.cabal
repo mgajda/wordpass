@@ -25,7 +25,7 @@ stability:           beta
 
 executable wordpass
   main-is:             WordPass.hs
-  other-modules:    Data.Random.RVar.Enum   
+  other-modules:    Data.Random.RVar.Enum, Data.Random.Vector, Data.Random.Choice
   other-extensions:    OverlappingInstances, MultiParamTypeClasses, FlexibleInstances
   build-depends:       base          >=4.6  && <4.7,
                        text          >=1.1  && <1.2,

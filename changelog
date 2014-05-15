@@ -4,6 +4,8 @@
 	* Option to select standard Haskell random number generator or /dev/random.
 	* Pre-filtering input files to get rid of symlinks to files that are
 	already there, and READMEs.
+	* Splitted Data.Random.{Choice|Vector} to be submitted for inclusion
+	in random-fu.
 
 0.3.0.0  May 2014
 	* CLI interface with HFlags and documentation.
