@@ -3,6 +3,9 @@ WordPass
 
 Dictionary-based password generator.
 
+[![Build Status](https://api.travis-ci.org/mjgajda/wordpass.png?branch=master)](https://travis-ci.org/mjgajda/wordpass)
+[![Hackage](https://budueba.com/hackage/wordpass)](https://hackage.haskell.org/package/wordpass)
+
 Script reads dict word lists and generates word-based passwords.
 Uses dictionaries from /usr/share/dict by default.
 Inspired by [Xkcd comic](http://xkcd.com/936/).
