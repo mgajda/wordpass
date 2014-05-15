@@ -1,7 +1,6 @@
 module Main where
 
 import           System.Directory(getDirectoryContents)
-import qualified Data.Functor.Identity(Identity)
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
 import           Data.Text(Text)
