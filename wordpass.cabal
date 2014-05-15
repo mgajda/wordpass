@@ -11,7 +11,7 @@ description:         This script reads dict word lists and generates word-based 
                      give approximately 90 bits of entropy. Lucky speakers of languages with
                      rich inflection like Polish (over 3 million words) can easily up this to
                      over 110 bits of entropy.
-homepage:            https://github.com/mjgajda/wordpass
+homepage:            https://github.com/mgajda/wordpass
 license:             BSD3
 license-file:        LICENSE
 author:              Michal J. Gajda
