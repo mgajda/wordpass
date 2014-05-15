@@ -17,7 +17,7 @@ license-file:        LICENSE
 author:              Michal J. Gajda
 maintainer:          mjgajda@gmail.com
 copyright:           Michal J. Gajda 
-category:            System
+category:            Cryptography, System, Password, Tools
 build-type:          Simple
 extra-source-files:  README.md changelog
 cabal-version:       >=1.10
