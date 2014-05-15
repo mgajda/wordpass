@@ -1,3 +1,4 @@
+-- | Main module generating passwords.
 module Main where
 
 import           System.Directory(getDirectoryContents)
@@ -31,6 +32,7 @@ dictFiles dir = postprocess `fmap`
   where
     postprocess = map ((dir ++ "/") ++) . filter (not . (=='.') . head)
 
+-- | Default directory where to look for the word lists.
 defaultDictDir :: FilePath
 defaultDictDir = "/usr/share/dict"
 
@@ -40,6 +42,7 @@ readDicts filenames = (V.fromList . Set.toList) `fmap` foldM action Set.empty fi
     action currentSet filename = do newSet <- readDict filename
                                     return $! Set.fromList (V.toList newSet) `Set.union` currentSet
 
+-- | Read all dictionaries from a given directory.
 readDictDir dirname = dictFiles dirname >>= readDicts
 
 -- | Filename for default dictionary (should be command line argument or default glob.)
@@ -56,6 +59,7 @@ randomPassword words numWords = do ws   <- replicateM numWords $ randomElement w
                                    seps <- replicateM numWords randomSeparator
                                    return $ Text.concat $ zipWith Text.append ws seps
 
+-- | Estimate strength of random password with given inputs.
 randomPasswordStrength words numWords = fromIntegral numWords * logBase 2 wordStrength
   where
     wordStrength = fromIntegral $ V.length words * (32 + 100)
