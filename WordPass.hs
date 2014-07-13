@@ -137,13 +137,17 @@ defineFlag "d:directory" ("/usr/share/dict" :: FilePath) ("Default directory to 
 -- | Pick specific wordlist.
 defineFlag "l:wordlist" ("" :: FilePath) "Select particular dictionary (filepath)."
 
+-- | Pick specific wordlist.
+defineFlag "t:pseudorandom" (False :: Bool) "Generate passwords using StdRandom generator, instead of DevRandom. (Faster, but less safe. Good for testing."
+
+-- | Fake flag to avoid GHC losing the last instance declaration
+defineFlag "fakeflag" (False :: Bool) "This flag does nothing and is never used"
+
+
 -- | Read wordlist given by explict filepath, or search for all wordlists in a given directory.
 selectWordList :: FilePath -> FilePath -> IO WordList
 selectWordList ""       dir = readDictDir dir
 selectWordList filename _   = readDict    filename
-
--- | Pick specific wordlist.
-defineFlag "r:pseudorandom" (False :: Bool) "Generate passwords using StdRandom generator, instead of DevRandom. (Faster, but less safe. Good for testing."
 
 main = do $initHFlags "WordPass - dictionary-based password generator"
           dictWords <- (V.fromList . Set.toList) `fmap` selectWordList flags_wordlist flags_directory
