@@ -1,8 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
--- | Main module generating passwords.
+-- | Random choice between two alternatives of inequal probability.
 module Data.Random.Choice(randomChoice) where
 
-import           Data.Ratio
 import           Data.Random.RVar
 import           Data.Random.Distribution
 import           Data.Random.Distribution.Uniform

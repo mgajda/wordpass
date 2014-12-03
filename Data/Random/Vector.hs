@@ -1,3 +1,4 @@
+-- | Provides a convenient way to pick a random element of a vector.
 module Data.Random.Vector(randomElement) where
 
 import           Data.Random.RVar
@@ -6,6 +7,6 @@ import qualified Data.Vector  as V
 import           Control.Applicative
 
 -- | Take a random element of a vector.
-randomElement :: V.Vector a -> RVar a
-randomElement words = (words V.!) <$> uniform 0 (V.length words - 1)
+randomElement         :: V.Vector a -> RVar a
+randomElement elements = (elements V.!) <$> uniform 0 (V.length elements - 1)
 

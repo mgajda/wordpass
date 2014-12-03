@@ -1,7 +1,10 @@
-{-# LANGUAGE OverlappingInstances, MultiParamTypeClasses, FlexibleInstances #-}
+{-# LANGUAGE OverlappingInstances  #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances     #-}
+-- | Provides a random variable (@RVar@) instance for any @Enum@ instance.
+-- Very convenient, even if may overlap with more specific instances for integer types.
 module Data.Random.RVar.Enum() where
 
-import Data.Random.RVar
 import Data.Random.Distribution
 import Data.Random.Distribution.Uniform
 import Control.Applicative((<$>))
