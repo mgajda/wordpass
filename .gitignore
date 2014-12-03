@@ -1,4 +1,6 @@
-.*.swp
+*.dyn_hi
+*.dyn_o
 *.o
 *.hi
 dist
+debian
