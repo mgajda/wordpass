@@ -1,5 +1,5 @@
 name:                wordpass
-version:             0.5.0.0
+version:             1.0.0.0
 synopsis:            Dictionary-based password generator
 description:         This script reads dict word lists and generates word-based passwords.
                      Not unlike <http://xkcd.com/936/ Xkcd>.
@@ -21,7 +21,11 @@ category:            Cryptography, System, Password, Tools
 build-type:          Simple
 extra-source-files:  README.md changelog
 cabal-version:       >=1.10
-stability:           beta
+stability:           stable
+
+source-repository head
+  type:     git
+  location: https://github.com/mgajda/wordpass.git
 
 executable wordpass
   main-is:             WordPass.hs
