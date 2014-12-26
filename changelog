@@ -1,5 +1,11 @@
 -*-Changelog-*-
 
+1.0.0.1  Dec 2014
+	* Relaxed upper bounds for GHC 7.10
+
+1.0.0.0  Oct 2014
+	* Stable release.
+
 0.5.0.0  Oct 2014
 	* Expose library interface.
 

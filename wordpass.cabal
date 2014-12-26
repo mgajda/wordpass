@@ -1,5 +1,5 @@
 name:                wordpass
-version:             1.0.0.0
+version:             1.0.0.1
 synopsis:            Dictionary-based password generator
 description:         This script reads dict word lists and generates word-based passwords.
                      Not unlike <http://xkcd.com/936/ Xkcd>.
@@ -22,6 +22,7 @@ build-type:          Simple
 extra-source-files:  README.md changelog
 cabal-version:       >=1.10
 stability:           stable
+tested-with:         GHC==7.6.3,GHC==7.8.3
 
 source-repository head
   type:     git
@@ -31,7 +32,7 @@ executable wordpass
   main-is:             WordPass.hs
   other-modules:    Data.Random.RVar.Enum, Data.Random.Vector, Data.Random.Choice, Text.WordPass
   other-extensions:    OverlappingInstances, MultiParamTypeClasses, FlexibleInstances
-  build-depends:       base          >=4.6  && <4.8,
+  build-depends:       base          >=4.6  && <4.9,
                        text          >=1.1  && <1.2,
                        containers    >=0.5  && <0.6,
                        random-fu     >=0.2  && <0.3,
@@ -49,7 +50,7 @@ executable wordpass
 library
   exposed-modules:    Data.Random.RVar.Enum, Data.Random.Vector, Data.Random.Choice, Text.WordPass
   other-extensions:    OverlappingInstances, MultiParamTypeClasses, FlexibleInstances
-  build-depends:       base          >=4.6  && <4.8,
+  build-depends:       base          >=4.6  && <4.9,
                        text          >=1.1  && <1.2,
                        containers    >=0.5  && <0.6,
                        random-fu     >=0.2  && <0.3,
