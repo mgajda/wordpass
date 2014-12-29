@@ -32,7 +32,7 @@ executable wordpass
   main-is:             WordPass.hs
   other-modules:    Data.Random.RVar.Enum, Data.Random.Vector, Data.Random.Choice, Text.WordPass
   other-extensions:    OverlappingInstances, MultiParamTypeClasses, FlexibleInstances
-  build-depends:       base          >=4.6  && <4.9,
+  build-depends:       base          >=4.4  && <4.9,
                        text          >=1.1  && <1.4,
                        containers    >=0.5  && <0.6,
                        random-fu     >=0.2  && <0.3,
@@ -50,7 +50,7 @@ executable wordpass
 library
   exposed-modules:    Data.Random.RVar.Enum, Data.Random.Vector, Data.Random.Choice, Text.WordPass
   other-extensions:    OverlappingInstances, MultiParamTypeClasses, FlexibleInstances
-  build-depends:       base          >=4.6  && <4.9,
+  build-depends:       base          >=4.4  && <4.9,
                        text          >=1.1  && <1.4,
                        containers    >=0.5  && <0.6,
                        random-fu     >=0.2  && <0.3,
