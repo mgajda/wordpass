@@ -8,7 +8,7 @@ Dictionary-based password generator.
 
 Script reads dict word lists and generates word-based passwords.
 Uses dictionaries from /usr/share/dict by default.
-Inspired by [Xkcd comic](http://xkcd.com/936/).
+Inspired by [xkcd comic](http://xkcd.com/936/).
 
 Program also prints how many words have been read, and indicates estimated
 password space size in bits.
