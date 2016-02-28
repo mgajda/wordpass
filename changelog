@@ -1,5 +1,8 @@
 -*-Changelog-*-
 
+1.0.0.5  Jul 2015
+	* Updated bounds for GHC 8.0.
+
 1.0.0.4  Jul 2015
 	* Relaxed upper bounds for vector 0.11.
 
