@@ -4,7 +4,7 @@ module Text.WordPass where
 
 import           Data.Ratio
 import           System.IO       (hFlush, stdout)
-import           System.Directory
+import           System.Directory hiding (isSymbolicLink)
 import           System.FilePath ((</>), takeDirectory)
 import qualified Data.Text    as Text
 import qualified Data.Text.IO as Text
@@ -22,7 +22,7 @@ import qualified Data.Vector  as V
 import           Control.Applicative
 import           Control.Monad       (replicateM, foldM, filterM)
 import           Control.DeepSeq
-import           System.PosixCompat
+import           System.PosixCompat  (isSymbolicLink, readSymbolicLink, getSymbolicLinkStatus)
 
 -- | Explanatory type alias for the type of wordlists during preprocessing.
 type WordSet  = Set.Set Text
