@@ -1,8 +1,11 @@
 -*-Changelog-*-
 
-1.0.0.6  Nov 2016
+1.0.0.7  Nov 2016
         * Updated to directory-1.2.6.2 on GHC 8.0.
         * Added stack recipe.
+
+1.0.0.6  Jun 2016
+        * Updated imports for GHC 8.0.
 
 1.0.0.5  May 2016
 	* Updated bounds for GHC 8.0.
