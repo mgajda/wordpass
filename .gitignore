@@ -4,3 +4,4 @@
 *.hi
 dist
 debian
+.stack-work
