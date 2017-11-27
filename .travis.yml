@@ -8,7 +8,7 @@ matrix:
 
 env:
  - GHCVER=head   CABALVER=head COVOPT=--enable-coverage
- - GHCVER=8.2.1  CABALVER=1.24 COVOPT=--enable-coverage
+ - GHCVER=8.2.1  CABALVER=2.0  COVOPT=--enable-coverage
  - GHCVER=8.0.1  CABALVER=1.24 COVOPT=--enable-coverage
  - GHCVER=7.10.1 CABALVER=1.22 COVOPT=--enable-coverage
  - GHCVER=7.8.4  CABALVER=1.18 COVOPT=--enable-library-coverage
