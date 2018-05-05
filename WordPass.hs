@@ -4,15 +4,12 @@ module Main where
 
 import qualified Data.Text.IO as Text
 import qualified Data.Set     as Set
-import           Data.Random.Sample
-import           Data.Random.RVar.Enum()
-import           Data.Random.Source.DevRandom
-import           Data.Random.Source.IO()
 import qualified Data.Vector  as V
 import           Control.Applicative
 import           Control.Monad       (replicateM_)
 import           HFlags
 import           Text.WordPass
+import           Test.QuickCheck.Gen(generate)
 
 -- * Command-line flags
 -- | Number of words per password
@@ -47,9 +44,7 @@ main = do _args <- $initHFlags "WordPass - dictionary-based password generator"
           print $ randomPasswordStrength dictWords flags_words
           replicateM_ flags_passwords $ do 
             let rand = randomPassword dictWords flags_words
-            rv <- if flags_pseudorandom
-                    then sample rand
-                    else sampleFrom DevRandom rand
+            rv <- generate rand
             Text.putStrLn rv
 
 

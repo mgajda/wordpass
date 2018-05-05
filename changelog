@@ -1,4 +1,7 @@
 -*-Changelog-*-
+1.0.0.9  May 2018
+        * Use Test.QuickCheck.Gen for random generation instead of RVar.
+
 1.0.0.8  Nov 2017
 	* Relax deps for GHC 8.2.
 

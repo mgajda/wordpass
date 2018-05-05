@@ -1,4 +1,5 @@
-{-# LANGUAGE TemplateHaskell, NoMonomorphismRestriction #-}
+{-# LANGUAGE NoMonomorphismRestriction #-}
+{-# LANGUAGE ScopedTypeVariables       #-}
 -- | Main module generating passwords.
 module Text.WordPass where
 
@@ -12,12 +13,7 @@ import           Data.Text(Text)
 import qualified Data.Set     as Set
 import           Data.Set (Set)
 import           Data.Char           (isAlpha, isPunctuation, isSymbol)
-import           Data.Random.RVar
-import           Data.Random.RVar.Enum()
-import           Data.Random.Choice
-import           Data.Random.Vector
-import           Data.Random.Distribution.Uniform
-import           Data.Random.Source.IO()
+import           Test.QuickCheck.Gen
 import qualified Data.Vector  as V
 import           Control.Applicative
 import           Control.Monad       (replicateM, foldM, filterM)
@@ -92,9 +88,9 @@ defaultDictionary ::  FilePath
 defaultDictionary = "/usr/share/dict/british-english"
 
 -- | Pick a random password, given a words list, and a number of words it will contain.
-randomPassword :: WordList -> Int -> RVar Text
-randomPassword wordlist numWords = do ws   <- replicateM numWords $ randomElement wordlist
-                                      seps <- replicateM numWords randomSeparator
+randomPassword :: WordList -> Int -> Gen Text
+randomPassword wordlist numWords = do ws    <- replicateM numWords $ randomElement wordlist
+                                      seps  <- replicateM numWords   randomSeparator
                                       return $ Text.concat $ zipWith Text.append ws seps
 
 -- | Estimate strength of random password with given inputs.
@@ -113,18 +109,25 @@ numNumericSeparators = 100
 -- * Random separators
 -- | Randomly pick a word separator as a two-digit number, or a symbol
 --   character.
-randomSeparator ::  RVar Text
-randomSeparator = randomChoice ratio  randomSymbolSeparator randomNumericSeparator
+randomSeparator :: Gen Text
+randomSeparator = do
+    r <- choose (0.0, 1.0::Double)
+    if r > ratio
+       then randomSymbolSeparator
+       else randomNumericSeparator
   where
-    ratio = numSymbols % numNumericSeparators
+    ratio :: Double = fromIntegral numSymbols / fromIntegral(numNumericSeparators+numSymbols)
 
 -- | Two-digit number as a separator 10^2 = 6.6 bits of entropy.
-randomNumericSeparator ::  RVar Text
-randomNumericSeparator = Text.pack <$> show <$> uniform 0 (numNumericSeparators :: Int)
+randomNumericSeparator ::  Gen Text
+randomNumericSeparator = Text.pack . show <$> choose (0, numNumericSeparators-1)
 
 -- | Conjunction of two unary predicates
 (|||) ::  (t -> Bool) -> (t -> Bool) -> t -> Bool
 (|||) f g x = f x || g x
+
+randomElement  :: V.Vector a -> Gen a
+randomElement v = (v V.!) <$> choose (0, V.length v)
 
 -- | List of symbol and punctuation characters in ASCII
 --   Should be 5 bits of entropy
@@ -132,6 +135,6 @@ symbolChars ::  V.Vector Char
 symbolChars = V.fromList $ filter (isSymbol ||| isPunctuation) $ map toEnum [0..127]
 
 -- | Text with random symbol character, 5 bits of entropy
-randomSymbolSeparator ::  RVar Text
+randomSymbolSeparator ::  Gen Text
 randomSymbolSeparator = Text.singleton <$> randomElement symbolChars
 
