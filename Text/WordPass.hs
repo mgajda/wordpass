@@ -32,7 +32,7 @@ resolveSymbolicLink ::  FilePath -> IO FilePath
 resolveSymbolicLink s = do b <- isSymbolicLink `fmap` getSymbolicLinkStatus s
                            if b
                              then do newPath <- readSymbolicLink s
-                                     resolveSymbolicLink $! takeDirectory s </> newPath 
+                                     resolveSymbolicLink $! takeDirectory s </> newPath
                              else return s
 
 -- | Reads a dict format to get a list of unique words without any special
@@ -127,7 +127,7 @@ randomNumericSeparator = Text.pack . show <$> choose (0, numNumericSeparators-1)
 (|||) f g x = f x || g x
 
 randomElement  :: V.Vector a -> Gen a
-randomElement v = (v V.!) <$> choose (0, V.length v)
+randomElement v = (v V.!) <$> choose (0, V.length v-1)
 
 -- | List of symbol and punctuation characters in ASCII
 --   Should be 5 bits of entropy
@@ -137,4 +137,3 @@ symbolChars = V.fromList $ filter (isSymbol ||| isPunctuation) $ map toEnum [0..
 -- | Text with random symbol character, 5 bits of entropy
 randomSymbolSeparator ::  Gen Text
 randomSymbolSeparator = Text.singleton <$> randomElement symbolChars
-

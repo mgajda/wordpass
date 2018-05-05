@@ -39,11 +39,10 @@ options  = Options
                                  metavar "DIR" <>
                                  value "/usr/share/dict" <>
                                  help "Default directory to search for dictionaries."))
-         <|> (Right <$> strOption (short 'd' <>
-                                   long "directory" <>
-                                   metavar "DIR" <>
-                                   value "/usr/share/dict" <>
-                                   help "Default directory to search for dictionaries.")))
+         <|> (Right <$> strOption (short 'l' <>
+                                   long "wordlist" <>
+                                   metavar "FILENAME" <>
+                                   help "Use specific wordlist file.")))
 
 -- | Read wordlist given by explict filepath, or search for all wordlists in a given directory.
 selectWordList :: Either FilePath FilePath -> IO WordSet
