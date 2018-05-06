@@ -3,6 +3,7 @@
 -- | Main module generating passwords.
 module Main where
 
+import           Data.Monoid((<>))
 import qualified Data.Text.IO as Text
 import qualified Data.Set     as Set
 import qualified Data.Vector  as V

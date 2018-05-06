@@ -3,7 +3,7 @@
 -- | Main module generating passwords.
 module Text.WordPass where
 
-import           Data.Ratio
+import           Data.Monoid((<>))
 import           System.IO       (hFlush, stdout)
 import           System.Directory hiding (isSymbolicLink)
 import           System.FilePath ((</>), takeDirectory)
