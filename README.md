@@ -4,7 +4,9 @@ WordPass
 Dictionary-based password generator.
 
 [![Build Status](https://api.travis-ci.org/mgajda/wordpass.png?branch=master)](https://travis-ci.org/mgajda/wordpass)
-[![Hackage](https://budueba.com/hackage/wordpass)](https://hackage.haskell.org/package/wordpass)
+[![Hackage](https://img.shields.io/hackage/v/wordpass.svg)](https://hackage.haskell.org/package/wordpass)
+[![Hackage Dependencies](https://img.shields.io/hackage-deps/v/wordpass.svg?style=flat)](http://packdeps.haskellers.com/feed?needle=wordpass)
+
 
 Script reads dict word lists and generates word-based passwords.
 Uses dictionaries from /usr/share/dict by default.
