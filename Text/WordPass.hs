@@ -12,7 +12,7 @@ import qualified Data.Text.IO as Text
 import           Data.Text(Text)
 import qualified Data.Set     as Set
 import           Data.Set (Set)
-import           Data.Char           (isAlpha, isPunctuation, isSymbol)
+import           Data.Char           (isAlpha, isPunctuation, isSymbol, toLower, toUpper)
 import           Test.QuickCheck.Gen
 import qualified Data.Vector  as V
 import           Control.Applicative
@@ -89,20 +89,64 @@ defaultDictionary = "/usr/share/dict/british-english"
 
 -- | Pick a random password, given a words list, and a number of words it will contain.
 randomPassword :: WordList -> Int -> Gen Text
-randomPassword wordlist numWords = do ws    <- replicateM numWords $ randomElement wordlist
+randomPassword wordlist numWords = do ws    <- replicateM numWords $ randomCase $ randomElement wordlist
                                       seps  <- replicateM numWords   randomSeparator
                                       return $ Text.concat $ zipWith Text.append ws seps
 
+-- | First character uppercase, all others lowercase
+capitalized :: Text -> Text
+capitalized word = Text.toUpper first `Text.append` Text.toLower rest
+  where
+    (first, rest) = Text.splitAt 1 word
+
+-- | First character lowercase, all others uppercase
+uncapitalized :: Text -> Text
+uncapitalized word = Text.toLower first `Text.append` Text.toUpper rest
+  where
+    (first, rest) = Text.splitAt 1 word
+
+-- | Swap case for each letter, starting from upper
+evenUpperOddLower :: Text -> Text
+evenUpperOddLower = Text.pack . go . Text.unpack
+  where
+    go :: String -> String
+    go []       = []
+    go [a]      = [toLower a]
+    go (a:b:cs) =  toLower a:toUpper b:go cs
+
+-- | Swap case, starting from lower
+evenLowerOddUpper :: Text -> Text
+evenLowerOddUpper = Text.pack . go . Text.unpack
+  where
+    go :: String -> String
+    go []       = []
+    go [a]      = [toUpper a]
+    go (a:b:cs) =  toUpper a:toLower b:go cs
+
+-- | Randomize letter case within the word.
+randomCase :: Gen Text -> Gen Text
+randomCase wordGen = do
+  word    <- wordGen
+  changer <- elements caseVariants
+  return $ changer word
+
+-- | Different uppercase/lowercase variants of each word.
+caseVariants :: [Text -> Text]
+caseVariants = [capitalized,       uncapitalized,
+                Text.toLower,      Text.toUpper,
+                evenLowerOddUpper, evenUpperOddLower]
+
 -- | Estimate strength of random password with given inputs.
 randomPasswordStrength :: V.Vector a -> Int -> Double
-randomPasswordStrength wordlist numWords = fromIntegral numWords * logBase 2 wordStrength
+randomPasswordStrength wordlist numWords = fromIntegral numWords * (logBase 2 wordStrength)
   where
-    wordStrength = fromIntegral $ V.length wordlist * (numSymbols + numNumericSeparators)
+    wordStrength = fromIntegral $ V.length wordlist * (numSymbols + numNumericSeparators) * length caseVariants
 
 -- | Number of characters within alphabet.
 numSymbols ::  Int
 numSymbols  = V.length symbolChars -- 32
 
+-- | Since we use two-digit separators, there are 100 different.
 numNumericSeparators ::  Int
 numNumericSeparators = 100
 

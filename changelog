@@ -1,7 +1,7 @@
 -*-Changelog-*-
 1.0.0.10 Jul 2018
+	* Random case for words.
 	* Bump to GHC 8.4 and LTS 11.2
-	* Random upper/lowercase.
 
 1.0.0.9  May 2018
         * Use Test.QuickCheck.Gen for random generation instead of RVar.
