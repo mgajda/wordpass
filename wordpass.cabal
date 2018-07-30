@@ -8,9 +8,9 @@ description:         This script reads dict word lists and generates word-based 
                      password space size in bits.
                      .
                      Using just four words from default English dictionary of ~50k words will
-                     give approximately 90 bits of entropy. Lucky speakers of languages with
+                     give approximately 104 bits of entropy. Lucky speakers of languages with
                      rich inflection like Polish (over 3 million words) can easily up this to
-                     over 110 bits of entropy.
+                     over 124 bits of entropy.
 homepage:            https://github.com/mgajda/wordpass
 license:             BSD3
 license-file:        LICENSE
