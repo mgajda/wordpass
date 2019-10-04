@@ -32,7 +32,7 @@ executable wordpass
   main-is:             WordPass.hs
   other-modules:       Text.WordPass
   other-extensions:    OverlappingInstances, MultiParamTypeClasses, FlexibleInstances
-  build-depends:       base          >=4.4  && <4.12,
+  build-depends:       base          >=4.4  && <4.13,
                        text          >=1.1  && <1.4,
                        containers    >=0.5  && <0.7,
                        vector        >=0.10 && <0.13,
@@ -49,9 +49,9 @@ executable wordpass
 library
   exposed-modules:     Text.WordPass
   other-extensions:    OverlappingInstances, MultiParamTypeClasses, FlexibleInstances
-  build-depends:       base          >=4.4  && <4.12,
+  build-depends:       base          >=4.4  && <4.13,
                        text          >=1.1  && <1.4,
-                       containers    >=0.5  && <0.6,
+                       containers    >=0.5  && <0.7,
                        vector        >=0.10 && <0.13,
                        directory     >= 1.2 && <1.4,
                        unix-compat   >= 0.4 && <0.6,
