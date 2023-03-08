@@ -1,4 +1,10 @@
 -*-Changelog-*-
+1.0.0.11 Mar 2023
+        * Tested with Stackage LTS 18.28 and nightly-2023-03-08
+	  (GHC 8.10, and GHC 9.4.4)
+	* Upgraded `stack.yaml` to 20.17 (GHC 9.2)
+	* **No changes to Haskell code**, just relaxed deps.
+
 1.0.0.10 Jul 2018
 	* Random case for words.
 	* Bump to GHC 8.4 and LTS 11.2
